@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Diffie-Hellman</title>
+</head>
+
+<body style="font-family: Arial; background:#f4f4f4;">
+
+<div style="max-width:400px; margin:50px auto; background:white; padding:20px; border-radius:8px; box-shadow:0 0 10px #ccc;">
+
+<h2 style="text-align:center;">Diffie-Hellman</h2>
+
+<div style="margin:10px 0;">
+<label>Prime (p):</label><br>
+<input type="number" id="p" placeholder="Enter prime number">
+</div>
+
+<div style="margin:10px 0;">
+<label>Generator (g):</label><br>
+<input type="number" id="g" placeholder="Enter generator">
+</div>
+
+<div style="margin:10px 0;">
+<label>Alice Private Key (a):</label><br>
+<input type="number" id="a" placeholder="Enter private key">
+</div>
+
+<button onclick="compute()" 
+style="width:100%; padding:10px; background:#007bff; color:white; border:none; border-radius:5px;">
+Compute
+</button>
+
+<div id="result" style="margin-top:15px;"></div>
+
+</div>
+
+<script>
+function modPow(base, exp, mod) {
+    let result = 1;
+    base %= mod;
+
+    while (exp > 0) {
+        if (exp % 2 === 1)
+            result = (result * base) % mod;
+
+        exp = Math.floor(exp / 2);
+        base = (base * base) % mod;
+    }
+    return result;
+}
+
+function compute() {
+    let p = parseInt(document.getElementById("p").value);
+    let g = parseInt(document.getElementById("g").value);
+    let a = parseInt(document.getElementById("a").value);
+
+    // 🔴 Validation
+    if (isNaN(p) || isNaN(g) || isNaN(a)) {
+        document.getElementById("result").innerHTML = "⚠️ Please fill all fields.";
+        return;
+    }
+
+    if (p <= 2 || g <= 1 || a <= 0) {
+        document.getElementById("result").innerHTML = "⚠️ Invalid values entered.";
+        return;
+    }
+
+    let b = Math.floor(Math.random() * (p - 2)) + 1;
+
+    let A = modPow(g, a, p);
+    let B = modPow(g, b, p);
+
+    let Ka = modPow(B, a, p);
+    let Kb = modPow(A, b, p);
+
+    document.getElementById("result").innerHTML =
+        "<b>Alice Public Key:</b> " + A + "<br>" +
+        "<b>Bob Public Key:</b> " + B + "<br><br>" +
+        "<b>Shared Secret:</b> " + Ka;
+}
+</script>
+
+</body>
+</html>
